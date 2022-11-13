@@ -52,6 +52,14 @@ def register():
 
     form = RegisterForm()
     if form.validate_on_submit():
+
+        user_data = current_app.db.user.find_one({"email":form.email.data})
+
+        if user_data:
+            flash("Email already exists. Pleasue use a different email or log in.", category="danger")
+            return redirect(url_for('.register'))
+
+        
         user = User(
             _id=uuid.uuid4().hex,
             email=form.email.data,
@@ -103,7 +111,7 @@ def logout():
     session_theme = session.get("theme")
     session.clear()
     session["theme"] = session_theme
-    
+
     return redirect(url_for('.login'))
 
 
